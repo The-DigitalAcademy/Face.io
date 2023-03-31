@@ -1,0 +1,24 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5430,
+            "driver": "PostgreSQL",
+            "name": "postgres",
+            "database": "postgres",
+            "username": "postgres",
+            "password": ""
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5430,
+            "driver": "PostgreSQL",
+            "name": "faceio",
+            "database": "faceio",
+            "username": "postgres",
+            "password": ""
+        }
+    ]
+}

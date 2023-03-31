@@ -78,6 +78,7 @@ def predict_from_frame(frame, threshold=0.9):
     print(attendance_df)
     return frame
 
+
 # Create the Streamlit app
 st.title('Face Recognition')
 run = st.checkbox('Run')

@@ -2,6 +2,13 @@ import cv2
 import os
 import random
 import streamlit as st
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from Database.db import Base, Employee
+import psycopg2
+
+
+
 
 # Define the capture function
 def capture_photos(person_number):
@@ -97,17 +104,38 @@ def detect_faces():
     cap.release()
     st.write('Stopped')
 
+def add_employee(emp_number, name, surname, cohort):
+    engine = create_engine('postgresql://postgres:@localhost:5430/faceio')
+    Base.metadata.bind = engine
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    new_employee = Employee(empl_no=emp_number, full_name=name, surname=surname, cohort=cohort)
+    session.add(new_employee)
+    session.commit()
+    st.success("Saved information successfully",icon="✅")
+    return new_employee
+
 # Create the Streamlit app
 def app():
     st.title('Face Photo Capture')
+    st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    emp_number = st.text_input('Enter your Employee number:', '')
+    name = st.text_input("Enter Name:")
+    surname = st.text_input("Enter Surname:")
+    cohort = st.selectbox(("Cohort"),
+                              ("Data Science","Full Stack","Sales Force"))
+    if st.button('Save Information'):
+        add_employee(int(emp_number), name, surname, cohort)
+    st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     st.text('Press the button below to start capturing photos')
     detect_faces()
-    person_number = st.text_input('Enter your unique number:', '')
+    st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     if st.button('Capture Photos'):
-        capture_photos(person_number=person_number)
+        capture_photos(person_number=emp_number)
         st.text('Photos captured successfully!')
     else:
         st.text('Click the button to start capturing photos')
-
+    st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    
 if __name__ == "__main__":
     app()

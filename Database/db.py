@@ -9,6 +9,5 @@ class Employee(Base):
     
     empl_no = Column(Integer, primary_key=True)
     full_name = Column(String)
-    surname = Column(String)
     cohort = Column(String)
     event_time = Column(TIMESTAMP)   

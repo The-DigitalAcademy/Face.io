@@ -109,7 +109,7 @@ def add_employee(emp_number, name, surname, cohort):
     Base.metadata.bind = engine
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
-    new_employee = Employee(empl_no=emp_number, full_name=name, surname=surname, cohort=cohort)
+    new_employee = Employee(empl_no=emp_number, full_name=name + '_' + surname, cohort=cohort)
     session.add(new_employee)
     session.commit()
     st.success("Saved information successfully",icon="✅")
@@ -125,7 +125,7 @@ def app():
     cohort = st.selectbox(("Cohort"),
                               ("Data Science","Full Stack","Sales Force"))
     if st.button('Save Information'):
-        add_employee(int(emp_number), name, surname, cohort)
+        add_employee(int(emp_number), name ,surname, cohort)
     st.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     st.text('Press the button below to start capturing photos')
     detect_faces()

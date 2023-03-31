@@ -5,19 +5,41 @@ import datetime
 import os
 import numpy as np
 from tensorflow.keras.models import load_model
+from Database.db import Base , Employee
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-num_classes = 4
+num_classes = 5
+
+class_names = {}
+
+# Connect to the database
+engine = create_engine('postgresql://postgres:@localhost:5430/faceio')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
+
+# Query the database to get the number of classes, class names, and class values
+employees = session.query(Employee).all()
+for employee in employees:
+    class_names[employee.empl_no] = employee.full_name
 
 # Load the pre-saved model
 model = load_model('transfer_learning_trained5_classes_face_cnn_model.h5')
 
-# Define a dictionary of class names
-class_names = {0: 'chris_evans', 1: 'chris_hemsworth', 2: 'mark_ruffalo', 3: 'robert_downey_jr', 4: 'scarlett_johansson'}
-
 # Create an attendance dataframe
+filename = 'attendance.csv'
+
 try:
-    attendance_df = pd.read_csv('attendance.csv')
+    attendance_df = pd.read_csv(filename)
 except FileNotFoundError:
+    print("File does not exist, creating a new one")
+    attendance_df = pd.DataFrame(columns=['Name', 'Time'])
+except pd.errors.EmptyDataError:
+    print("File is empty")
+    attendance_df = pd.DataFrame(columns=['Name', 'Time']) # Replace with your column names
+except pd.errors.ParserError:
+    print("Unable to parse file")
     attendance_df = pd.DataFrame(columns=['Name', 'Time'])
 
 # Define a function to update the attendance dataframe

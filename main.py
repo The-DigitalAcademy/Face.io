@@ -19,7 +19,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 # Query the database to get the number of classes, class names, and class values
-employees = session.query(Employee).all()
+employees = session.query(Employee).order_by(Employee.empl_no).all()
 class_names = {}
 for i, employee in enumerate(employees):
     class_names[i] = employee.full_name
@@ -61,13 +61,13 @@ def predict_from_frame(frame, threshold=0.9):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     # Detect faces in the frame
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=4)
     
     # Loop through the detected faces and do predictions
     for (x, y, w, h) in faces:
         # Extract the face ROI
         face_roi = gray[y:y+h, x:x+w]
-        face_roi = cv2.resize(face_roi, (224, 224))
+        face_roi = cv2.resize(face_roi, (224, 224)) 
         face_roi = np.expand_dims(face_roi, axis=-1)
         face_roi = np.repeat(face_roi, 3, axis=-1)
         face_roi = np.expand_dims(face_roi, axis=0)
@@ -86,19 +86,21 @@ def predict_from_frame(frame, threshold=0.9):
             # Draw the bounding box and predicted class name on the frame
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
             cv2.putText(frame, predicted_class_name, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-            # Update the attendance dataframe
             
-    
-            if attendance_df['Name'].str.contains(predicted_class_name).any():
-                pass
+            # Update the attendance dataframe
+            employee = session.query(Employee).filter_by(full_name=predicted_class_name).first()
+            if employee:
+                employee_id = Employee.empl_no
+                if not attendance_df['Name'].str.contains(predicted_class_name).any():
+                    update_attendance(predicted_class_name)
             else:
-                update_attendance(predicted_class_name)
+                print(f"No employee found with name {predicted_class_name}")
             
         else:
             # If below threshold, draw unknown label on the frame
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
             cv2.putText(frame, 'unknown', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
-    print(attendance_df)
+    
     return frame
 
 

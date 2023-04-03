@@ -24,7 +24,7 @@ def capture_photos(person_number):
     # Define the labels for the images
     labels = ['train', 'test', 'val']
     # Define the number of images to capture
-    num_images = 30
+    num_images = 50
     # Define the split ratio
     split_ratio = [0.7, 0.2, 0.1]
     # Define the path to the Haar Cascade Classifier
@@ -42,7 +42,7 @@ def capture_photos(person_number):
             # Convert the frame to grayscale
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # Detect faces in the grayscale image
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=4, minSize=(30, 30))
+            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5, minSize=(30, 30))
             # Loop through the faces
             for (x, y, w, h) in faces:
                 # Generate a random number between 0 and 1

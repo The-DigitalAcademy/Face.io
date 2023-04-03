@@ -9,7 +9,6 @@ from Database.db import Base , Employee
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-num_classes = 5
 
 class_names = {}
 
@@ -21,11 +20,13 @@ session = DBSession()
 
 # Query the database to get the number of classes, class names, and class values
 employees = session.query(Employee).all()
-for employee in employees:
-    class_names[employee.empl_no] = employee.full_name
+class_names = {}
+for i, employee in enumerate(employees):
+    class_names[i] = employee.full_name
+    print(f"Class {i}: {class_names[i]}")
 
 # Load the pre-saved model
-model = load_model('transfer_learning_trained5_classes_face_cnn_model.h5')
+model = load_model('transfer_learning_trained13_classes_face_cnn_model_data_science.h5')
 
 # Create an attendance dataframe
 filename = 'attendance.csv'
@@ -76,9 +77,9 @@ def predict_from_frame(frame, threshold=0.9):
         
         # Do prediction
         prediction = model.predict(face_roi)[0]
-        predicted_class = np.argmax(prediction)
-        predicted_class_name = class_names.get(predicted_class, 'unknown')
-        predicted_class_prob = prediction[predicted_class]
+        predicted_class_idx = np.argmax(prediction)
+        predicted_class_name = class_names.get(predicted_class_idx, 'unknown')
+        predicted_class_prob = prediction[predicted_class_idx]
         
         # Check if the predicted class probability is above the threshold
         if predicted_class_prob >= threshold:
@@ -86,12 +87,12 @@ def predict_from_frame(frame, threshold=0.9):
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
             cv2.putText(frame, predicted_class_name, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
             # Update the attendance dataframe
-            for x in range(num_classes):
+            
     
-                if attendance_df['Name'].str.contains(predicted_class_name).any():
-                    pass
-                else:
-                    update_attendance(predicted_class_name)
+            if attendance_df['Name'].str.contains(predicted_class_name).any():
+                pass
+            else:
+                update_attendance(predicted_class_name)
             
         else:
             # If below threshold, draw unknown label on the frame

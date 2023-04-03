@@ -57,7 +57,7 @@ def capture_photos(person_number):
                 # Extract the face from the frame
                 face = frame[y:y+h, x:x+w]
                 # Resize the face to 100x100 pixels
-                face = cv2.resize(face, (100, 100))
+                face = cv2.resize(face, (224, 224))
                 # Save the image to the appropriate directory
                 img_path = os.path.join(label_dir_path, f'{person_number}_{split_label}_{i:02d}.jpg')
                 cv2.imwrite(img_path, face)

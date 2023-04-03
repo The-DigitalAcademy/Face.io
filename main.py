@@ -52,7 +52,7 @@ def update_attendance(name):
     attendance_df.to_csv('attendance.csv', index=False)
 
 # Define a function to predict the class from a single frame
-def predict_from_frame(frame, threshold=0.9):
+def predict_from_frame(frame, threshold=0.8):
     global attendance_df
     # Load the face detector
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
@@ -61,7 +61,7 @@ def predict_from_frame(frame, threshold=0.9):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     # Detect faces in the frame
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=4)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=4)
     
     # Loop through the detected faces and do predictions
     for (x, y, w, h) in faces:

@@ -29,7 +29,7 @@ for i, employee in enumerate(employees):
 model = load_model('transfer_learning_trained13_classes_face_cnn_model_data_science.h5')
 
 # Create an attendance dataframe
-filename = 'attendance.csv'
+filename = f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv'
 
 try:
     attendance_df = pd.read_csv(filename)
@@ -49,10 +49,10 @@ def update_attendance(name):
     now = datetime.datetime.now()
     time = now.strftime("%Y-%m-%d %H:%M:%S")
     attendance_df = attendance_df.append({'Name': name, 'Time': time}, ignore_index=True)
-    attendance_df.to_csv('attendance.csv', index=False)
+    attendance_df.to_csv(f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv', index=False)
 
 # Define a function to predict the class from a single frame
-def predict_from_frame(frame, threshold=0.8):
+def predict_from_frame(frame, threshold=0.9, max_attempts=2):
     global attendance_df
     # Load the face detector
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
@@ -75,15 +75,20 @@ def predict_from_frame(frame, threshold=0.8):
         # Normalize pixel values
         face_roi = face_roi / 255.0
         
-        # Do prediction
-        prediction = model.predict(face_roi)[0]
-        predicted_class_idx = np.argmax(prediction)
-        predicted_class_name = class_names.get(predicted_class_idx, 'unknown')
-        predicted_class_prob = prediction[predicted_class_idx]
+        # Do multiple predictions
+        attempts = 0
+        predicted_class_idx = None
+        while attempts < max_attempts and predicted_class_idx is None:
+            prediction = model.predict(face_roi)[0]
+            predicted_class_idx = np.argmax(prediction)
+            predicted_class_name = class_names.get(predicted_class_idx, 'unknown')
+            predicted_class_prob = prediction[predicted_class_idx]
+            if predicted_class_prob < threshold:
+                predicted_class_idx = None
+            attempts += 1
         
-        # Check if the predicted class probability is above the threshold
-        if predicted_class_prob >= threshold:
-            # Draw the bounding box and predicted class name on the frame
+        # Draw the bounding box and predicted class name on the frame
+        if predicted_class_idx is not None:
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
             cv2.putText(frame, predicted_class_name, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
             
@@ -97,7 +102,7 @@ def predict_from_frame(frame, threshold=0.8):
                 print(f"No employee found with name {predicted_class_name}")
             
         else:
-            # If below threshold, draw unknown label on the frame
+            # If all attempts fail, label as unknown
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
             cv2.putText(frame, 'unknown', (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
     

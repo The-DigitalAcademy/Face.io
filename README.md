@@ -11,7 +11,7 @@
 - Room for improvement
 
 ## General Info
-Face.io is a project that uses facial recognition technology to capture employee faces as they enter the building. The system then records the employee's name, surname and employee number, which can be used for attendance tracking and security purposes. The system can also convert the captured data into a CSV file, which makes it easy to process and analyze the data. This type of technology can help streamline the check-in process for employees, improve security measures and provide valuable insights into emnployee attendance patterns
+Face.io is a project that uses facial recognition technology to capture employee faces as they enter the building.The system then records the employee's name, surname and employee number, which can be used for attendance tracking and security purposes.The system can also convert the captured data into a CSV file, which makes it easy to process and analyze the data.This type of technology can help streamline the check-in process for employees, improve security measures and provide valuable insights into emnployee attendance patterns
 
 ## Technologies used
 - Python

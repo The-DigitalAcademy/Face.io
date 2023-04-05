@@ -32,13 +32,13 @@ Face.io is a project that uses facial recognition technology to capture employee
 
 2.Software setup: Install facial recognition software on a local server or cloud-based platform. The software should be configured to recognize the employees' faces and associate them with their name and employee number.
 
-Database setup: Set up a database to store the captured employee data, including their facial image, name, employee number, and attendance records. Depending on the number of employees and volume of data, a SQL database may be appropriate.
+3.Database setup: Set up a database to store the captured employee data, including their facial image, name, employee number, and attendance records. Depending on the number of employees and volume of data, a SQL database may be appropriate.
 
-Capturing App: The app should be used to register new employees or cohort so that the system recognizes them
+4.Capturing App: The app should be used to register new employees or cohort so that the system recognizes them
 
-Testing and validation: Before deploying the system, perform rigorous testing to ensure that it accurately recognizes employees' faces and records their attendance data correctly.
+5.Testing and validation: Before deploying the system, perform rigorous testing to ensure that it accurately recognizes employees' faces and records their attendance data correctly.
 
-Deployment: Once the system is fully tested and validated, it can be deployed in the designated area. Ensure that appropriate training is provided to employees and that the system is adequately maintained and updated as needed.
+6.Deployment: Once the system is fully tested and validated, it can be deployed in the designated area. Ensure that appropriate training is provided to employees and that the system is adequately maintained and updated as needed.
 
 
 ## Usage

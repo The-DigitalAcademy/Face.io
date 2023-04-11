@@ -10,6 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
+
 class_names = {}
 
 # Connect to the database
@@ -61,7 +62,7 @@ def predict_from_frame(frame, threshold=0.9, max_attempts=2):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     # Detect faces in the frame
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=4)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
     
     # Loop through the detected faces and do predictions
     for (x, y, w, h) in faces:
@@ -126,3 +127,4 @@ else:
 
 camera.release()
 cv2.destroyAllWindows()
+

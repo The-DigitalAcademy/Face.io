@@ -8,6 +8,8 @@ from tensorflow.keras.models import load_model
 from Database.db import Base , Employee
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import psycopg2
+import time
 
 
 
@@ -53,7 +55,7 @@ def update_attendance(name):
     attendance_df.to_csv(f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv', index=False)
 
 # Define a function to predict the class from a single frame
-def predict_from_frame(frame, threshold=0.9, max_attempts=2):
+def predict_from_frame(frame, threshold=0.94, max_attempts=1):
     global attendance_df
     # Load the face detector
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
@@ -128,3 +130,37 @@ else:
 camera.release()
 cv2.destroyAllWindows()
 
+
+# Query the database to get the cohort names
+cohorts = session.query(Employee.cohort).distinct().all()
+cohort_names = [c[0] for c in cohorts]
+
+# Allow the user to select a cohort
+selected_cohort = st.selectbox('Select a cohort', cohort_names)
+date = st.date_input('Select date')
+
+# Generate the filename based on the selected cohort and date
+filename = f'attendance/attendance_{date.strftime("%Y-%m-%d")}.csv'
+
+# Check if the file exists
+if os.path.exists(filename):
+    # Load the attendance dataframe from the CSV file
+    attendance_df = pd.read_csv(filename)
+    
+    # Add a new column to the dataframe to indicate the status of each employee
+    attendance_df['status'] = attendance_df['Time'].apply(lambda x: 'Late' if x > '08:00:00' else 'On time')
+    
+    # Highlight the rows where the status is 'Late'
+    def highlight_late(row):
+        if row['status'] == 'Late':
+            return ['background-color: yellow']*len(row)
+        else:
+            return ['']*len(row)
+
+    st.write(f"Attendance for {selected_cohort} cohort on {date.strftime('%Y-%m-%d')}")
+    st.write(attendance_df.style.apply(highlight_late, axis=1))
+    
+else:
+    st.write(f"No attendance data found for {selected_cohort} cohort on {date.strftime('%Y-%m-%d')}")
+
+    

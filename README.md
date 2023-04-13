@@ -24,10 +24,15 @@ This type of technology can help streamline the check-in process for employees, 
 
 ## Features
 1.Facial recognition: The system should be able to accurately recognize the employees' faces as they enter the designated area.
+
 2.Attendance tracking: The system should be able to record the date, time, and duration of each employee's visit, and maintain an accurate attendance record.
+
 3.Employee identification: The system should be able to identify each employee by name and employee number, and associate this information with their facial image.
+
 4.Reporting and analytics: The system should be able to generate reports and analytics on employee attendance patterns, such as average time spent in the designated area, absenteeism rates, and other key metrics.
+
 5.Security and privacy: The system should be designed with security and privacy in mind, including encryption of employee data, access controls, and compliance with relevant privacy regulations.
+
 6.Scalability and integration: The system should be scalable and able to integrate with other software applications or hardware devices, such as HR systems, access control systems, or building management systems.
 
 ## Setup

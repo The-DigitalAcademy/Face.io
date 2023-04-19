@@ -6,10 +6,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from Database.db import Base, Employee
 
-
-
-
-
 # Define the capture function
 def capture_photos(person_number):
     # Define the capture device

@@ -55,7 +55,7 @@ def update_attendance(name):
     attendance_df.to_csv(f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv', index=False)
 
 # Define a function to predict the class from a single frame
-def predict_from_frame(frame, threshold=0.94, max_attempts=1):
+def predict_from_frame(frame, threshold=0.95, max_attempts=1):
     global attendance_df
     # Load the face detector
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')

@@ -173,7 +173,7 @@ if os.path.exists(filename):
 
     spreadsheet = client.open('csv_to_sheet')
 
-    with open(f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv', 'r') as file_obj:
+    with open(f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv', 'a') as file_obj:
         content = file_obj.read()
         client.import_csv(spreadsheet.id, data=content)
 else:

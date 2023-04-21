@@ -12,8 +12,11 @@
 
 ## General Info
 Face.io is a project that uses facial recognition technology to capture employee faces as they enter the building.
-The system then records the employee's name, surname and employee number, which can be used for attendance tracking and security purposes.
+
+The system then records the employee's name, surname, employee number and time, which can be used for attendance tracking and security purposes.
+
 The system can also convert the captured data into a CSV file, which makes it easy to process and analyze the data.
+
 This type of technology can help streamline the check-in process for employees, improve security measures and provide valuable insights into employee attendance patterns
 
 ## Technologies used
@@ -25,7 +28,7 @@ This type of technology can help streamline the check-in process for employees, 
 ## Features
 1.Facial recognition: The system should be able to accurately recognize the employees' faces as they enter the designated area.
 
-2.Attendance tracking: The system should be able to record the date, time, and duration of each employee's visit, and maintain an accurate attendance record.
+2.Attendance tracking: The system should be able to record the date and time of each employee's visit, and maintain an accurate attendance record.
 
 3.Employee identification: The system should be able to identify each employee by name and employee number, and associate this information with their facial image.
 
@@ -54,7 +57,7 @@ This type of technology can help streamline the check-in process for employees, 
 
 2.Face recognition: The system would analyze the facial image and compare it to the database of employee images to identify the employee by name and employee number.
 
-3.Attendance tracking: Once the employee is identified, the system would record their check-in time and update their attendance record. If the employee leaves the designated area and returns later, the system would also record their check-out time and duration of absence.
+3.Attendance tracking: Once the employee is identified, the system would record their check-in time and update their attendance record.
 
 4.Reporting and analysis: The system would generate reports and analytics on employee attendance patterns, such as average time spent in the designated area, absenteeism rates, and other key metrics.
 
@@ -71,6 +74,9 @@ Project still in progress
 
 ## Acknowledgement
 1.Sibongile Maluleka
+
 2.Pabalelo Ramawela
+
 3.John Diale
+
 4.Gudani Mbedzi

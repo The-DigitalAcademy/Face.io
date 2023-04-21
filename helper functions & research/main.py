@@ -5,15 +5,11 @@ import datetime
 import os
 import numpy as np
 from tensorflow.keras.models import load_model
-from Database.db import Base , Employee, FaceMeta
+from Database.db import Base , Employee
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.inception_resnet_v2 import preprocess_input
-from deepface import DeepFace
-
 
 class_names = {}
 
@@ -40,22 +36,22 @@ try:
     attendance_df = pd.read_csv(filename)
 except FileNotFoundError:
     print("File does not exist, creating a new one")
-    attendance_df = pd.DataFrame(columns=['Name', 'Time','Employee No.'])
+    attendance_df = pd.DataFrame(columns=['Name', 'Time'])
 except pd.errors.EmptyDataError:
     print("File is empty")
-    attendance_df = pd.DataFrame(columns=['Name', 'Time','Employee No.']) # Replace with your column names
+    attendance_df = pd.DataFrame(columns=['Name', 'Time']) # Replace with your column names
 except pd.errors.ParserError:
     print("Unable to parse file")
-    attendance_df = pd.DataFrame(columns=['Name', 'Time','Employee No.'])
+    attendance_df = pd.DataFrame(columns=['Name', 'Time'])
 
 # Define a function to update the attendance dataframe
-def update_attendance(name,empl_no):
+def update_attendance(name):
     global attendance_df
     now = datetime.datetime.now()
     time = now.strftime("%Y-%m-%d %H:%M:%S")
-    attendance_df = attendance_df.append({'Name': name, 'Time': time,'Employee No.' : empl_no}, ignore_index=True)
+    attendance_df = attendance_df.append({'Name': name, 'Time': time}, ignore_index=True)
     attendance_df.to_csv(f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv', index=False)
-   
+
 # Define a function to predict the class from a single frame
 def predict_from_frame(frame, threshold=0.95, max_attempts=1):
     global attendance_df
@@ -67,50 +63,6 @@ def predict_from_frame(frame, threshold=0.95, max_attempts=1):
     
     # Detect faces in the frame
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
-    
-    def preprocess_image(img):
-        # Convert to grayscale
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        # Detect faces
-        face = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
-        
-        # Crop face and resize to (160, 160)
-        if len(face) > 0:
-            (x, y, w, h) = face[0]
-            face = img[y:y+h, x:x+w]
-            face = cv2.resize(face, (160, 160))
-            face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-            face = np.expand_dims(face, axis=0)
-            face = preprocess_input(face)
-            return face
-        else:
-            return None
-    deepface = DeepFace.build_model("Facenet")
-    face = preprocess_image(frame)
-    if face is not None:
-        # Get embedding for face
-        embedding = deepface.predict(face)[0]
-
-        # Query the database for face embeddings
-        face_meta = session.query(FaceMeta).all()
-
-        # Find closest match in database
-        min_distance = float('inf')
-        match_employee_no = None
-
-        for face in face_meta:
-            employee_embeddings = np.frombuffer(face.embedding, dtype=np.float32).reshape((-1, 128))
-
-            # Calculate distances between target embedding and employee embeddings
-            distances = np.linalg.norm(employee_embeddings - embedding, axis=1)
-
-            # Find closest match
-            closest_distance = np.min(distances)
-            if closest_distance < min_distance:
-                min_distance = closest_distance
-                match_employee_no = face.empl_no
-            
     
     # Loop through the detected faces and do predictions
     for (x, y, w, h) in faces:
@@ -144,11 +96,9 @@ def predict_from_frame(frame, threshold=0.95, max_attempts=1):
             # Update the attendance dataframe
             employee = session.query(Employee).filter_by(full_name=predicted_class_name).first()
             if employee:
-                employee_id = employee.empl_no
-                print(employee_id)
-                if int(employee_id) == int(match_employee_no):
-                    if not attendance_df['Name'].str.contains(predicted_class_name).any():
-                        update_attendance(predicted_class_name,int(match_employee_no))
+                employee_id = Employee.empl_no
+                if not attendance_df['Name'].str.contains(predicted_class_name).any():
+                    update_attendance(predicted_class_name)
             else:
                 print(f"No employee found with name {predicted_class_name}")
         else:
@@ -176,6 +126,7 @@ else:
 
 camera.release()
 cv2.destroyAllWindows()
+
 
 
 # Query the database to get the cohort names

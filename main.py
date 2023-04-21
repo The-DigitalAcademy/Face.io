@@ -206,21 +206,22 @@ if os.path.exists(filename):
 
     st.write(f"Attendance for {selected_cohort} cohort on {date.strftime('%Y-%m-%d')}")
     st.write(attendance_df.style.apply(highlight_late, axis=1))
-    scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
-                "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+    if st.button(f"Submit data for {selected_cohort}"):
+        scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
+                    "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
-    credentials = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
-    client = gspread.authorize(credentials)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+        client = gspread.authorize(credentials)
 
-    spreadsheet = client.open('csv_to_sheet')
-    worksheet = spreadsheet.sheet1  # assuming the data goes into the first sheet
+        spreadsheet = client.open('csv_to_sheet')
+        worksheet = spreadsheet.sheet1  # assuming the data goes into the first sheet
 
-    with open(f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv', 'r') as file_obj:
-        content = file_obj.read()
-        rows = content.split('\n')
-        data = [row.split(',') for row in rows if row]  # remove empty rows and split the values by comma
-        worksheet.append_rows(data)
-        st.success("Data Uploaded successfully!")
+        with open(f'attendance/attendance_{datetime.datetime.now().strftime("%Y-%m-%d")}.csv', 'r') as file_obj:
+            content = file_obj.read()
+            rows = content.split('\n')
+            data = [row.split(',') for row in rows if row]  # remove empty rows and split the values by comma
+            worksheet.append_rows(data)
+            st.success("Data Uploaded successfully!")
 else:
     st.write(f"No attendance data found for {selected_cohort} cohort on {date.strftime('%Y-%m-%d')}")
 

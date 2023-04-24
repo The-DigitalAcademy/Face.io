@@ -63,6 +63,8 @@ def capture_photos(person_number):
                     deepface_dir_path = os.path.join('Deepface', f'{person_number}')
                     os.makedirs(deepface_dir_path, exist_ok=True)
                     deepface_img_path = os.path.join(deepface_dir_path, f'{person_number}.jpg')
+                    if os.path.exists(deepface_img_path):
+                        os.remove(deepface_img_path)
                     cv2.imwrite(deepface_img_path, face)
             # Display the frame in the Streamlit app
             st.image(frame, channels='BGR', use_column_width=True)

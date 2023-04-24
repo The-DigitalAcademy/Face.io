@@ -24,7 +24,7 @@ def capture_photos(person_number):
     # Define the split ratio
     split_ratio = [0.7, 0.2, 0.1]
     # Define the path to the Haar Cascade Classifier
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_alt2.xml')
     # Loop through the labels
     # Loop through the labels
     for label in labels:
@@ -57,6 +57,13 @@ def capture_photos(person_number):
                 # Save the image to the appropriate directory
                 img_path = os.path.join(label_dir_path, f'{person_number}_{split_label}_{i:02d}.jpg')
                 cv2.imwrite(img_path, face)
+                
+                # Move one of the photos taken into the Deepface directory based on the employee number
+                if i == 0:
+                    deepface_dir_path = os.path.join('Deepface', f'{person_number}')
+                    os.makedirs(deepface_dir_path, exist_ok=True)
+                    deepface_img_path = os.path.join(deepface_dir_path, f'{person_number}.jpg')
+                    cv2.imwrite(deepface_img_path, face)
             # Display the frame in the Streamlit app
             st.image(frame, channels='BGR', use_column_width=True)
     # Release the capture device
